@@ -1,1 +1,2 @@
 - Cada vez que crees un código, crea también un commit. Pero no hagas push si no te lo digo.
+- Antes de hacer un commit tras desarrollar una funcionalidad o cambio, asegúrate de que el código compila ejecutando la tarea `:app:compileDebugKotlin`.
