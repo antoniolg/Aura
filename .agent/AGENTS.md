@@ -1,0 +1,1 @@
+- Cada vez que crees un código, crea también un commit. Pero no hagas push si no te lo digo.
