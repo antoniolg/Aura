@@ -1,5 +1,7 @@
 package com.example.aura.ui.detail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -18,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -26,9 +30,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.aura.data.local.JournalEntry
@@ -85,50 +92,85 @@ private fun EntryDetailBody(
     Column(
         modifier = modifier.verticalScroll(rememberScrollState())
     ) {
-        AsyncImage(
-            model = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000",
-            contentDescription = null,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            contentScale = ContentScale.Crop
-        )
+                .height(280.dp)
+        ) {
+            AsyncImage(
+                model = "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000",
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
+                                MaterialTheme.colorScheme.surface
+                            ),
+                            startY = 400f
+                        )
+                    )
+            )
+        }
 
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = entry.mood.icon,
-                    contentDescription = entry.mood.displayName,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = entry.mood.displayName,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.secondary
-                )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 32.dp)
+        ) {
+            Surface(
+                color = entry.mood.color.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Icon(
+                        imageVector = entry.mood.icon,
+                        contentDescription = null,
+                        tint = entry.mood.color,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = entry.mood.displayName,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = entry.mood.color,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
-
-            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = entry.title,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                lineHeight = 40.sp
             )
 
             Text(
                 text = SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.getDefault()).format(Date(entry.timestamp)),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                modifier = Modifier.padding(top = 4.dp)
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(24.dp))
 
             Text(
                 text = entry.content,
                 style = MaterialTheme.typography.bodyLarge,
+                lineHeight = 28.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
                 modifier = Modifier.fillMaxWidth()
             )
         }

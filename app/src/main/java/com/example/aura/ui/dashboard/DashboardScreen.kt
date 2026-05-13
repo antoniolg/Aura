@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AutoAwesome
@@ -137,14 +137,20 @@ private fun DashboardBody(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(240.dp)
+                    .height(260.dp)
             ) {
-                AsyncImage(
-                    model = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000",
-                    contentDescription = null,
+                Surface(
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                    shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant
+                ) {
+                    AsyncImage(
+                        model = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000",
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -152,9 +158,10 @@ private fun DashboardBody(
                             Brush.verticalGradient(
                                 colors = listOf(
                                     Color.Transparent,
-                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
                                     MaterialTheme.colorScheme.surface
-                               )
+                                ),
+                                startY = 300f
                             )
                         )
                 )
@@ -223,26 +230,31 @@ private fun JournalItem(
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 4.dp else 0.dp),
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isSelected) 2.dp else 0.dp
+        ),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) 
-                MaterialTheme.colorScheme.primaryContainer 
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)
             else 
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        ),
+        border = if (isSelected) null else androidx.compose.foundation.BorderStroke(
+            1.dp, 
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
         )
     ) {
-
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
-                color = entry.mood.color.copy(alpha = 0.2f),
-                shape = CircleShape,
-                modifier = Modifier.size(56.dp)
+                color = entry.mood.color.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier.size(64.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -259,22 +271,23 @@ private fun JournalItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = entry.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = SimpleDateFormat("EEEE, MMM dd", Locale.getDefault()).format(Date(entry.timestamp)),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = entry.content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 4.dp),
-                    lineHeight = 20.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                 )
             }

@@ -2,4 +2,9 @@
     <string name="app_name">Aura</string>
     <string name="dashboard_empty_title">Your aura is waiting…</string>
     <string name="dashboard_empty_subtitle">No entries yet. Start journaling your daily energy.</string>
+    <string name="entry_new_title">New Entry</string>
+    <string name="entry_save">Save</string>
+    <string name="entry_title_label">Title</string>
+    <string name="entry_content_label">Content</string>
+    <string name="entry_mood_label">How do you feel?</string>
 </resources>
