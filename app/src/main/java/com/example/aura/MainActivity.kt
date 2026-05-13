@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -59,15 +58,24 @@ fun AuraApp() {
                             Text(
                                 text = "Select an entry to view details",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
                 )
             ) {
+                val selectedEntryId = (backStack.lastOrNull() as? Destination.EntryDetail)?.entryId
                 DashboardScreen(
                     navigateToEntryEntry = { backStack.add(Destination.NewEntry) },
-                    onEntryClick = { backStack.add(Destination.EntryDetail(it)) }
+                    onEntryClick = { entryId ->
+                        val last = backStack.lastOrNull()
+                        if ((last is Destination.EntryDetail) || (last is Destination.NewEntry)) {
+                            backStack[backStack.size - 1] = Destination.EntryDetail(entryId)
+                        } else {
+                            backStack.add(Destination.EntryDetail(entryId))
+                        }
+                    },
+                    selectedEntryId = selectedEntryId
                 )
             }
             entry<Destination.NewEntry>(
@@ -87,7 +95,7 @@ fun AuraApp() {
                 )
             }
         },
-        entryDecorators = listOf<NavEntryDecorator<NavKey>>(
+        entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         )

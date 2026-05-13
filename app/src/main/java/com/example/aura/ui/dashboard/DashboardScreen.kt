@@ -38,7 +38,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -63,6 +62,7 @@ fun DashboardScreen(
     navigateToEntryEntry: () -> Unit,
     onEntryClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    selectedEntryId: Int? = null,
     viewModel: DashboardViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val dashboardUiState by viewModel.dashboardUiState.collectAsState()
@@ -114,6 +114,7 @@ fun DashboardScreen(
         DashboardBody(
             entryList = dashboardUiState.entryList,
             onEntryClick = onEntryClick,
+            selectedEntryId = selectedEntryId,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -123,7 +124,8 @@ fun DashboardScreen(
 private fun DashboardBody(
     entryList: List<JournalEntry>,
     onEntryClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedEntryId: Int? = null
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -178,6 +180,7 @@ private fun DashboardBody(
             JournalList(
                 entryList = entryList,
                 onEntryClick = { onEntryClick(it.id) },
+                selectedEntryId = selectedEntryId,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .heightIn(max = 3000.dp)
@@ -192,7 +195,8 @@ private fun DashboardBody(
 private fun JournalList(
     entryList: List<JournalEntry>,
     onEntryClick: (JournalEntry) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedEntryId: Int? = null
 ) {
     LazyColumn(
         modifier = modifier,
@@ -202,6 +206,7 @@ private fun JournalList(
         items(items = entryList, key = { it.id }) { entry ->
             JournalItem(
                 entry = entry,
+                isSelected = entry.id == selectedEntryId,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onEntryClick(entry) }
@@ -213,16 +218,21 @@ private fun JournalList(
 @Composable
 private fun JournalItem(
     entry: JournalEntry,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSelected: Boolean = false
 ) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 4.dp else 0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            containerColor = if (isSelected) 
+                MaterialTheme.colorScheme.primaryContainer 
+            else 
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         )
     ) {
+
         Row(
             modifier = Modifier
                 .padding(16.dp)
