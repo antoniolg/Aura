@@ -46,11 +46,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.aura.R
 import com.example.aura.data.local.JournalEntry
 import com.example.aura.ui.AppViewModelProvider
+import com.example.aura.ui.theme.AuraTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -290,6 +292,16 @@ private fun JournalItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
                 )
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmptyDashboardStatePreview() {
+    AuraTheme {
+        Surface {
+            EmptyDashboardState(modifier = Modifier.fillMaxSize())
         }
     }
 }
