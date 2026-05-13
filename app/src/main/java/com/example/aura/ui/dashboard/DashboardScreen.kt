@@ -11,17 +11,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +43,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -127,91 +127,91 @@ private fun DashboardBody(
     modifier: Modifier = Modifier,
     selectedEntryId: Int? = null
 ) {
-    Column(
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.verticalScroll(rememberScrollState())
+        contentPadding = PaddingValues(bottom = 100.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(240.dp)
-        ) {
-            AsyncImage(
-                model = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000",
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+        item {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                MaterialTheme.colorScheme.surface
+                    .fillMaxWidth()
+                    .height(240.dp)
+            ) {
+                AsyncImage(
+                    model = "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000",
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                    MaterialTheme.colorScheme.surface
+                               )
                             )
                         )
-                    )
-            )
+                )
+            }
         }
 
         if (entryList.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .padding(32.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Your aura is waiting...",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = "No entries yet. Start journaling your daily energy.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(top = 8.dp)
+            item {
+                EmptyDashboardState(
+                    modifier = Modifier.fillParentMaxHeight(0.6f)
                 )
             }
         } else {
-            JournalList(
-                entryList = entryList,
-                onEntryClick = { onEntryClick(it.id) },
-                selectedEntryId = selectedEntryId,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .heightIn(max = 3000.dp)
-            )
+            items(items = entryList, key = { it.id }) { entry ->
+                JournalItem(
+                    entry = entry,
+                    isSelected = entry.id == selectedEntryId,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .clickable { onEntryClick(entry.id) }
+                )
+            }
         }
-        
-        Spacer(modifier = Modifier.height(100.dp))
     }
 }
 
 @Composable
-private fun JournalList(
-    entryList: List<JournalEntry>,
-    onEntryClick: (JournalEntry) -> Unit,
-    modifier: Modifier = Modifier,
-    selectedEntryId: Int? = null
-) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+private fun EmptyDashboardState(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .padding(32.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        items(items = entryList, key = { it.id }) { entry ->
-            JournalItem(
-                entry = entry,
-                isSelected = entry.id == selectedEntryId,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onEntryClick(entry) }
-            )
-        }
+        Icon(
+            imageVector = Icons.Rounded.AutoAwesome,
+            contentDescription = null,
+            modifier = Modifier
+                .size(64.dp)
+                .padding(bottom = 16.dp),
+            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+        )
+        Text(
+            text = stringResource(R.string.dashboard_empty_title),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = stringResource(R.string.dashboard_empty_subtitle),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp)
+        )
     }
 }
 
